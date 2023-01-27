@@ -3,7 +3,7 @@
 # Repeat every two seconds
 
 sleep() {
-	! read -rt "$1"
+! read -rt "$1"
 } <> <(:)
 
 while true
