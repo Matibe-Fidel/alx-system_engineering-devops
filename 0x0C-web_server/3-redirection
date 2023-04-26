@@ -1,27 +1,20 @@
 #!/usr/bin/env bash
-#
-# Install NGINX on my server
+# Install nginx and start it
 
-NYANCAT='https://www.youtube.com/watch?v=QH2-TGUlwu4'
+apt-get update
+apt-get install -y nginx
 
-apt-get -y update
-apt-get -y install nginx
+mkdir /etc/nginx/html
+touch /etc/nginx/html/index.html
+echo "Hello Word!" > /etc/nginx/html/index.html
+printf %s "server {
+    listen 80;
+    listen [::]:80 default_server;
+    root   /etc/nginx/html;
+    index  index.html index.htm;
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+}" > /etc/nginx/sites-available/default
 
-sed -i '
-s@^\troot /var/www/html;$@&\n\trewrite ^/redirect_me '"${NYANCAT}"' permanent;@
-' /etc/nginx/sites-available/default
-
-cat > /var/www/html/index.html << 'EOF' 
-<html>
-  <head>
-    <title>Holberton School</title>
-  </head>
-  <body>
-    <p>Holberton School for the win!</p>
-  </body>
-</html>
-EOF
-
-service nginx start
-
-ufw allow 'Nginx HTTP'
+service nginx restart
